@@ -6,6 +6,7 @@
 
 	Who		Date		Modification
 	---------------------------------------------------------------------
+	tms		05/03/2024	Option to not over-write previous version
 
 ----------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------
@@ -81,10 +82,11 @@ int main ( int argc, char *argv[] )
 	char	*tokens[MAXTOKS];
 	int		tokcnt, xt, ndx, xl;
 	int		Debug = 0;
+	int		WriteNewFile = 1;
 
 	if ( argc < 3 )
 	{
-		printf ( "GitInsights owner {txt|html}\n" );
+		printf ( "GitInsights owner {txt|html} [-nowrite]\n" );
 		exit ( 1 );
 	}
 
@@ -100,9 +102,23 @@ int main ( int argc, char *argv[] )
 	}
 	else 
 	{
-		printf ( "GitInsights owner {txt|html}\n" );
+		printf ( "GitInsights owner {txt|html} [-nowrite]\n" );
 		exit ( 1 );
 	}
+
+	if ( argc == 4 )
+	{
+		if ( strcmp ( argv[3], "-nowrite" ) == 0 )
+		{
+			WriteNewFile = 0;
+		}
+		else
+		{
+			printf ( "Unknown argument\n" );
+			exit ( 1 );
+		}
+	}
+
 
 	sprintf ( DataFile, "/var/local/GitInsights/%s.CSV", Owner );
 
@@ -262,30 +278,47 @@ int main ( int argc, char *argv[] )
 		}
 	}
 
-	/*----------------------------------------------------------
-		write file and close
-	----------------------------------------------------------*/
-	if (( fp = fopen ( DataFile, "w" )) == NULL )
+	if ( WriteNewFile )
 	{
-		printf ( "fopen write %s failed\n", DataFile );
-		exit ( 1 );
-	}
-
-	xl = 0;
-	for ( ndx = 0; ndx < Count; ndx++ )
-	{
-		if ( xl < strlen(Array[ndx].RepoName) )
+		/*----------------------------------------------------------
+			write file and close
+		----------------------------------------------------------*/
+		if (( fp = fopen ( DataFile, "w" )) == NULL )
 		{
-			xl = strlen(Array[ndx].RepoName);
+			printf ( "fopen write %s failed\n", DataFile );
+			exit ( 1 );
 		}
 
-		fprintf ( fp, "%s,%d,%d,%d,%d\n",
-			Array[ndx].RepoName,
-			Array[ndx].Clones[1],
-			Array[ndx].Forks[1],
-			Array[ndx].Watchers[1],
-			Array[ndx].Stars[1] );
+		xl = 0;
+		for ( ndx = 0; ndx < Count; ndx++ )
+		{
+			if ( xl < strlen(Array[ndx].RepoName) )
+			{
+				xl = strlen(Array[ndx].RepoName);
+			}
+
+			fprintf ( fp, "%s,%d,%d,%d,%d\n",
+				Array[ndx].RepoName,
+				Array[ndx].Clones[1],
+				Array[ndx].Forks[1],
+				Array[ndx].Watchers[1],
+				Array[ndx].Stars[1] );
+		}
+
+		fclose ( fp );
 	}
+	else
+	{
+		xl = 0;
+		for ( ndx = 0; ndx < Count; ndx++ )
+		{
+			if ( xl < strlen(Array[ndx].RepoName) )
+			{
+				xl = strlen(Array[ndx].RepoName);
+			}
+		}
+	}
+
 
 	/*----------------------------------------------------------
 		print report
@@ -331,8 +364,6 @@ int main ( int argc, char *argv[] )
 	{
 		printf ( "</table>\n" );
 	}
-
-	fclose ( fp );
 
 	unlink ( "x1.json" );
 
