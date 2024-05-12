@@ -17,12 +17,16 @@ $(LIB): $(FILES)
 
 $(FILES): $(DEF)/shslib.h
 
+png:
+	cp -pv GitInsights05122024.png /var/www/vhosts/silverhammersoftware/html/GitInsights05122024.png
+
 clean:
 	rm -f $(LIB)
 
 all:
 	make clean
 	make
+	make png
 
 .PRECIOUS: $(LIB)
 
