@@ -342,8 +342,19 @@ int main ( int argc, char *argv[] )
 		{
 			printf ( "<tr>\n" );
 			printf ( "<td>%-*.*s </td>", xl, xl, Array[ndx].RepoName );
-			printf ( "<td>%2d,%2d%c </td>",
-				Array[ndx].Clones[0], Array[ndx].Clones[1], Array[ndx].Clones[0] != Array[ndx].Clones[1] ? '*' : ' ' );
+
+// printf ( "<td>%2d,%2d%c </td>", Array[ndx].Clones[0], Array[ndx].Clones[1], Array[ndx].Clones[0] != Array[ndx].Clones[1] ? '*' : ' ' );
+			printf ( "<td>%2d,%2d", Array[ndx].Clones[0], Array[ndx].Clones[1] );
+			if ( Array[ndx].Clones[0] < Array[ndx].Clones[1] )
+			{
+				printf ( "+ " );
+			}
+			else if ( Array[ndx].Clones[0] > Array[ndx].Clones[1] )
+			{
+				printf ( "- " );
+			}
+			printf ( "</td>" );
+	
 			printf ( "<td>%2d%c </td>", Array[ndx].Forks[1], Array[ndx].Forks [0] != Array[ndx].Forks [1] ? '*' : ' ' );
 			printf ( "<td>%2d%c </td>", Array[ndx].Watchers[1], Array[ndx].Watchers[0] != Array[ndx].Watchers[1] ? '*' : ' ' );
 			printf ( "<td>%2d%c</td>", Array[ndx].Stars[1], Array[ndx].Stars [0] != Array[ndx].Stars [1] ? '*' : ' ' );
@@ -351,9 +362,19 @@ int main ( int argc, char *argv[] )
 		}
 		else
 		{
+			char	FootNote = ' ';
+			if ( Array[ndx].Clones[0] < Array[ndx].Clones[1] )
+			{
+				FootNote = '+';
+			}
+			else if ( Array[ndx].Clones[0] > Array[ndx].Clones[1] )
+			{
+				FootNote = '-';
+			}
+
 			printf ( "%-*.*s %2d,%2d%c %2d%c %2d%c %2d%c\n",
 				xl, xl, Array[ndx].RepoName,
-				Array[ndx].Clones[0], Array[ndx].Clones[1], Array[ndx].Clones[0] != Array[ndx].Clones[1] ? '*' : ' ',
+				Array[ndx].Clones[0], Array[ndx].Clones[1], FootNote,
 				Array[ndx].Forks[1], Array[ndx].Forks [0] != Array[ndx].Forks [1] ? '*' : ' ',
 				Array[ndx].Watchers[1], Array[ndx].Watchers[0] != Array[ndx].Watchers[1] ? '*' : ' ',
 				Array[ndx].Stars[1], Array[ndx].Stars [0] != Array[ndx].Stars [1] ? '*' : ' ' );
